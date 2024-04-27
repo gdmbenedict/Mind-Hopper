@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Physics")]
     [SerializeField] private Rigidbody2D rb;
+    private bool grounded;
 
     [Header("Ground Checking")]
     [SerializeField] private Transform groundCheck;
@@ -19,26 +20,26 @@ public class PlayerMovement : MonoBehaviour
     private float horizontal;
 
     [Header("Jumping")]
-    [SerializeField] private float jumpingPower = 16f; 
+    [SerializeField] private float jumpingPower = 16f;
+
+    [Header("Animation")]
+    [SerializeField] private Animator anim;
 
     // Update is called once per frame
     void Update()
     {
+        grounded = IsGrounded();
+
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
-        if (!isFacingRight && horizontal > 0f)
-        {
-            Flip();
-        } 
-        else if (isFacingRight &&  horizontal < 0f)
-        {
-            Flip();
-        }
+        UpdateDirection();
+
+        UpdateAnim();
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed && IsGrounded())
+        if (context.performed && grounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
         }
@@ -66,4 +67,24 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
+
+    private void UpdateDirection()
+    {
+        if (!isFacingRight && horizontal > 0f)
+        {
+            Flip();
+        }
+        else if (isFacingRight && horizontal < 0f)
+        {
+            Flip();
+        }
+    }
+
+    private void UpdateAnim()
+    {
+        anim.SetBool("IsGrounded", grounded);
+        anim.SetFloat("HorizontalMovement", horizontal);
+    }
+
+
 }
