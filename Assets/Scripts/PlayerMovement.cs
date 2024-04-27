@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float speed = 8f;
     [SerializeField] private bool isFacingRight = true;
-    private float horizontal;
+    [SerializeField] private float horizontal;
 
     [Header("Jumping")]
     [SerializeField] private float jumpingPower = 16f;
@@ -82,8 +82,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateAnim()
     {
+        bool idle = false;
+
+        if (horizontal < 0.01f && horizontal > -0.01f)
+        {
+            idle = true;
+        }
+
         anim.SetBool("IsGrounded", grounded);
-        anim.SetFloat("HorizontalMovement", horizontal);
+        anim.SetBool("Idle", idle);
     }
 
 
