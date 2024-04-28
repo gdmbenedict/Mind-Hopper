@@ -5,27 +5,44 @@ using UnityEngine.UI; // Correct namespace for UI components like Image
 
 public class ImageFlicker : MonoBehaviour
 {
-    public Image targetImage; // assign to the inspector
-    public float flickerfrequency = 12.0f; // frequency in seconds
+    public SpriteRenderer targetImage; // Assign in the Inspector
+    public float flickerFrequency = 12.0f; // Frequency in seconds
+    private bool isFlickering = false; // Control the flickering
 
-    // Start is called before the first frame update
     private void Start()
     {
         if (targetImage == null)
         {
-            targetImage = GetComponent<Image>();
+            targetImage = GetComponent<SpriteRenderer>();
         }
-
-        StartCoroutine(FlickerRoutine());
     }
 
-    // Coroutine to flicker the image
+    // Method to start flickering
+    public void StartFlickering()
+    {
+        
+        if (!isFlickering)
+        {
+            Debug.Log("reached coroutine start");
+            isFlickering = true;
+            StartCoroutine(FlickerRoutine());   
+        }
+    }
+
+    // Method to stop flickering
+    public void StopFlickering()
+    {
+        isFlickering = false;
+        StopCoroutine(FlickerRoutine());       
+        targetImage.enabled = true; // Optionally, ensure the image is visible when stopping
+    }
+
     private IEnumerator FlickerRoutine()
     {
-        while(true)
+        while (isFlickering)
         {
             targetImage.enabled = !targetImage.enabled;
-            yield return new WaitForSeconds(1/flickerfrequency);
+            yield return new WaitForSeconds(1/flickerFrequency);
         }
     }
 }
