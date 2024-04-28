@@ -44,20 +44,17 @@ MonoBehaviour:
   m_Script: {fileID: -1087144670, guid: 9768878c70440784bab728d0b87a16b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FlashMode: 1
+  FlashMode: 2
   _autoTraining: 0
   TrainingInterval: 60
   NumberOfTrainingTrials: 60
   NumberOfClasses: 10
-  UserFlashSpeed: 1
-  LowpassCutoff: 10
   SelectionThreshold: 3
   SaveDataCSV: 0
   _advancedSettings: 0
   _syncMode: 1
-  PreTriggerDurationMs: 100
-  PostTriggerDurationMs: 900
+  OnOffRatio: 2
   OnTimeMs: 150
-  OffTimeMs: 150
+  OffTimeMs: 850
   LowpassOrder: 6
   RegularizationCoefficient: 1

@@ -45,4 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TrainingObject: {fileID: 0}
-  _applicationObjects: []
+  ApplicationObjects: []

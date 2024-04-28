@@ -38,11 +38,15 @@ namespace Gtec.UnityInterface
         private Vector3 _originalPosition;
         private Vector3 targetPosition;
 
-        private Vector3 targetOppositePosition;
-
         public MotionObject2D(int classId) : base(classId)
         {
             _classId = classId;
+        }
+
+        public bool VisualFlash
+        {
+            get { return _visualFlash; }
+            set { _visualFlash = value; }
         }
 
         public float OscillationAmplitude
@@ -93,7 +97,7 @@ namespace Gtec.UnityInterface
             while (Vector3.Distance(transform.localPosition, target) > 0.01f)
             {
                 float step = _oscillationSpeed * Time.deltaTime;
-                transform.localPosition = Vector3.Lerp(transform.position, target, step);
+                transform.localPosition = Vector3.Lerp(transform.localPosition, target, step);
                 yield return null;
             }
         }

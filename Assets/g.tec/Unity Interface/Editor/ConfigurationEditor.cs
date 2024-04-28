@@ -15,15 +15,12 @@ namespace Gtec.UnityInterface
         SerializedProperty TrainingInterval;
         SerializedProperty NumberOfTrainingTrials;
         SerializedProperty NumberOfClasses;
-        SerializedProperty UserFlashSpeed;
-        SerializedProperty LowpassCutoff;
+        SerializedProperty OnOffRatio;
         SerializedProperty SelectionThreshold;
         SerializedProperty SaveDataCSV;
         SerializedProperty _advancedSettings;
         SerializedProperty OnTimeMs;
         SerializedProperty OffTimeMs;
-        SerializedProperty PreTriggerDurationMs;
-        SerializedProperty PostTriggerDurationMs;
         SerializedProperty LowpassOrder;
         SerializedProperty RegularizationCoefficient;
 
@@ -38,15 +35,12 @@ namespace Gtec.UnityInterface
             TrainingInterval = serializedObject.FindProperty("TrainingInterval");
             NumberOfTrainingTrials = serializedObject.FindProperty("NumberOfTrainingTrials");
             NumberOfClasses = serializedObject.FindProperty("NumberOfClasses");
-            UserFlashSpeed = serializedObject.FindProperty("UserFlashSpeed");
-            LowpassCutoff = serializedObject.FindProperty("LowpassCutoff");
+            OnOffRatio = serializedObject.FindProperty("OnOffRatio");
             SelectionThreshold = serializedObject.FindProperty("SelectionThreshold");
             SaveDataCSV = serializedObject.FindProperty("SaveDataCSV");
             _advancedSettings = serializedObject.FindProperty("_advancedSettings");
             OnTimeMs = serializedObject.FindProperty("OnTimeMs");
             OffTimeMs = serializedObject.FindProperty("OffTimeMs");
-            PreTriggerDurationMs = serializedObject.FindProperty("PreTriggerDurationMs");
-            PostTriggerDurationMs = serializedObject.FindProperty("PostTriggerDurationMs");
             LowpassOrder = serializedObject.FindProperty("LowpassOrder");
             RegularizationCoefficient = serializedObject.FindProperty("RegularizationCoefficient");
 
@@ -56,7 +50,9 @@ namespace Gtec.UnityInterface
         {
             serializedObject.Update();
             GUILayout.Box(banner, GUILayout.ExpandWidth(true), GUILayout.Height(80));
+            GUI.enabled = false;
             EditorGUILayout.PropertyField(_flashMode);
+            GUI.enabled = true;
             //EditorGUILayout.PropertyField(_autoTraining);
             if (_autoTraining.boolValue)
             {
@@ -65,11 +61,8 @@ namespace Gtec.UnityInterface
             }
             EditorGUILayout.PropertyField(NumberOfTrainingTrials);
             EditorGUILayout.PropertyField(NumberOfClasses);
-            if(_flashMode.enumValueIndex == (int)BCIConfiguration.StimulationMode.ERP)
-            {
-                EditorGUILayout.PropertyField(UserFlashSpeed);
-            }
-            EditorGUILayout.PropertyField(LowpassCutoff);
+            if (_flashMode.enumValueIndex == (int)BCIConfiguration.StimulationMode.ERP || _flashMode.enumValueIndex == (int)BCIConfiguration.StimulationMode.ERPNoOverlap)
+                EditorGUILayout.PropertyField(OnTimeMs);
             EditorGUILayout.PropertyField(SelectionThreshold);
             EditorGUILayout.PropertyField(SaveDataCSV);
             EditorGUILayout.PropertyField(_advancedSettings);
@@ -78,14 +71,11 @@ namespace Gtec.UnityInterface
             {
                 EditorGUILayout.HelpBox("These settings are intended for advanced users and research, changing them may severly impact the performance of the BCI.", MessageType.Info);
                 EditorGUILayout.PropertyField(_syncMode);
-                EditorGUILayout.PropertyField(PreTriggerDurationMs);
-                EditorGUILayout.PropertyField(PostTriggerDurationMs);
                 if (_flashMode.enumValueIndex == (int)BCIConfiguration.StimulationMode.ERP)
                 {
-                    EditorGUILayout.PropertyField(OnTimeMs);
                     EditorGUILayout.PropertyField(OffTimeMs);
+                    EditorGUILayout.PropertyField(OnOffRatio);
                     EditorGUILayout.HelpBox("The sum of OnTime + OffTime must be >= (n_classes / refresh_rate (60Hz) * 1000)", MessageType.Warning);
-
                 }
                 EditorGUILayout.PropertyField(LowpassOrder);
                 EditorGUILayout.PropertyField(RegularizationCoefficient);

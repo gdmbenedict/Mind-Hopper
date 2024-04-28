@@ -38,8 +38,6 @@ namespace Gtec.UnityInterface
         private Vector3 _originalPosition;
         private Vector3 targetPosition;
 
-        private Vector3 targetOppositePosition;
-
         public MotionObject3D(int classId) : base(classId)
         {
             _classId = classId;
@@ -93,7 +91,7 @@ namespace Gtec.UnityInterface
             while (Vector3.Distance(transform.localPosition, target) > 0.01f)
             {
                 float step = _oscillationSpeed * Time.deltaTime;
-                transform.localPosition = Vector3.Lerp(transform.position, target, step);
+                transform.localPosition = Vector3.Lerp(transform.localPosition, target, step);
                 yield return null;
             }
         }

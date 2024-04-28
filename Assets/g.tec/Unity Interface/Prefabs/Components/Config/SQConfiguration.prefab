@@ -54,6 +54,6 @@ MonoBehaviour:
   BpSQLowCutoff: 0.5
   BpSQHighCutoff: 30
   SignalQualityFloatingThreshold: 25
-  SignalQualityGroundedThreshold: 5
+  SignalQualityGroundedThreshold: 2
   SignalqualityWindowSizeInSeconds: 1
   SignalqualityOverlapSizeInSeconds: 0.5

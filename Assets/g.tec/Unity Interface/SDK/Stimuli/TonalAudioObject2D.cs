@@ -33,10 +33,11 @@ namespace Gtec.UnityInterface
             _classId = classId;
             _audioSource.Stop();
         }
-
-        void Start()
-        {
         
+        public bool VisualFlash
+        {
+            get { return _visualFlash; }
+            set { _visualFlash = value; }
         }
 
         public override void SetStimulusOn()
