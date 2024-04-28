@@ -1,5 +1,10 @@
 fileFormatVersion: 2
-guid: 1b7d69a8a157f094e81aaceb46af0fce
+<<<<<<<< HEAD:Assets/g.tec/FlashControllerExample.unity.meta
+guid: c600264a4feef6144bf26d31dc333fbe
+========
+guid: b034ea05205e13e4280114825a0120b7
+folderAsset: yes
+>>>>>>>> main:Assets/Sprites & Images/Animations.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
