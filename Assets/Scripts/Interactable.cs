@@ -24,9 +24,8 @@ public class Interactable : MonoBehaviour
 
     [Header("Moveables")]
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Collider2D collider;
     [SerializeField] private bool held = false;
-    [SerializeField] private Rigidbody2D carryingRB;
+    private Rigidbody2D carryingRB;
     [SerializeField] private float stabalizationSpeed = 0.5f;
     private float originalGravity;
 
