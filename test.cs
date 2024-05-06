@@ -34,6 +34,8 @@ void Update()
                 }
             }
 
+            //continue further processing here
+
         }
         else
         {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LSL;
+using Accord.Math;
 
 namespace LSL4Unity.Samples.SimpleInlet
 { 
@@ -65,33 +66,82 @@ namespace LSL4Unity.Samples.SimpleInlet
             timestamp_buffer = new double[buf_samples];
         }
 
+        public class BandpassFilter
+        {
+            private float sampleRate;
+            private float lowFreq;
+            private float highFreq;
+
+            private float low;
+            private float high;
+            private float band;
+
+            public BandpassFilter(float sampleRate, float lowFreq, float highFreq)
+            {
+                this.sampleRate = sampleRate;
+                this.lowFreq = lowFreq;
+                this.highFreq = highFreq;
+            }
+
+            public float Filter(float sample)
+            {
+                high = sample - ((lowFreq / sampleRate) * low) - band;
+                band += (highFreq / sampleRate) * high;
+                low += (highFreq / sampleRate) * band;
+
+                return band;
+            }
+        }
+
         // Update is called once per frame
         void Update()
         {
-            if (inlet != null)
+            int samples_returned = 0;
+
+            if (inlet != null) 
             {
-                int samples_returned = inlet.pull_chunk(data_buffer, timestamp_buffer);
+                samples_returned = inlet.pull_chunk(data_buffer, timestamp_buffer);
                 Debug.Log("Samples returned: " + samples_returned);
-                if (samples_returned > 0)
+            }
+
+            if (samples_returned > 0)
+            {
+                // Create a bandpass filter
+                float fs = 256.0f;
+                float f1 = 0.1f;
+                float f2 = 30.0f;
+                var bandpassFilter = new BandpassFilter(fs, f1, f2);
+
+                // Assuming data_buffer is a 2D array with shape [samples_returned, num_channels]
+                for (int channel = 0; channel < data_buffer.GetLength(1); channel++)
                 {
-                    // There are many things you can do with the incoming chunk to make it more palatable for Unity.
-                    // Note that if you are going to do significant processing and feature extraction on your signal,
-                    // it makes much more sense to do that in an external process then have that process output its
-                    // result to yet another stream that you capture in Unity.
-                    // Most of the time we only care about the latest sample to get a visual representation of the latest
-                    // state, so that's what we do here: take the last sample only and use it to udpate the object scale.
-                    float x = data_buffer[samples_returned - 1, 0];
-                    float y = data_buffer[samples_returned - 1, 1];
-                    float z = data_buffer[samples_returned - 1, 2];
-                    var new_scale = new Vector3(x, y, z);
-                    Debug.Log("Setting cylinder scale to " + new_scale);
-                    gameObject.transform.localScale = new_scale;
-                }
-                else
-                {
-                    Debug.LogError("No consumers available or inlet is null.");
+                    float[] channel_data = new float[samples_returned];
+                    for (int i = 0; i < samples_returned; i++)
+                    {
+                        channel_data[i] = data_buffer[i, channel];
+                    }
+
+                    // Apply the filter to each sample
+                    float[] filtered_data = new float[samples_returned];
+                    for (int i = 0; i < samples_returned; i++)
+                    {
+                        filtered_data[i] = bandpassFilter.Filter(channel_data[i]);
+                    }
+
+                    // Put the filtered data back into the buffer
+                    for (int i = 0; i < samples_returned; i++)
+                    {
+                        data_buffer[i, channel] = filtered_data[i];
+                    }
+                    // continue further processing here
                 }
             }
+            else
+            {
+                Debug.LogError("No consumers available or inlet is null.");
+            }
+
         }
+
     }
 }
