@@ -15,12 +15,13 @@ import UnicornPy
 import os
 
 
-def bandpass_filter(data, lowcut, highcut, fs, order=5):
+# Define your bandpass filter
+def bandpass_filter(data, lowcut, highcut, fs, order=3):
     nyq = 0.5 * fs  # Nyquist Frequency
     low = lowcut / nyq
     high = highcut / nyq
     b, a = butter(order, [low, high], btype='band')
-    y = filtfilt(b, a, data)
+    y = filtfilt(b, a, data, palden=20, axis=0)
     return y
 
 
@@ -47,7 +48,7 @@ def extract_features(data, fs, target_freqs):
     return features.mean(axis=1)
 
 # Constants and settings
-fs = 256  # Sampling rate in Hz
+fs = 250  # Sampling rate in Hz
 target_freqs = [9, 10, 12, 15]  # SSVEP frequencies
 
 # Open Unicorn device
@@ -60,7 +61,7 @@ receivedBufferLength = FrameLength * numberOfAcquiredChannels * 4
 receivedBuffer = bytearray(receivedBufferLength)
 
 # Load the classifier
-classifier = joblib.load('ssvep_classifier.pkl')
+classifier = joblib.load('trained_classifier.pkl')
 
 # Set up LSL
 info = pylsl.StreamInfo('UnicornBCI', 'EEG', numberOfAcquiredChannels, fs, 'float32', 'myuid34234')
@@ -68,21 +69,6 @@ outlet = pylsl.StreamOutlet(info)
 
 # Set up classifier (This should be trained beforehand)
 classifier = SVC(kernel='linear')  # Assuming it's already trained
-
-# Define your bandpass filter and feature extraction functions as before
-def bandpass_filter(data, lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    y = filtfilt(b, a, data, axis=0)
-    return y
-
-def extract_features(data, fs, target_freqs):
-    freqs, psd = welch(data, fs, nperseg=fs*2, axis=0)
-    target_indices = np.searchsorted(freqs, target_freqs)
-    features = psd[target_indices]
-    return features.mean(axis=1)
 
 # [Initialize Unicorn and LSL as before...]
 
@@ -94,7 +80,7 @@ while True:
     data_buffer[:, -FrameLength:] = new_data
     
     if np.any(data_buffer):  # Make sure the buffer is not empty
-        filtered_data = bandpass_filter(data_buffer, 0.1, 30, fs)
+        filtered_data = bandpass_filter(0.1, 30, data_buffer, fs)
         features = extract_features(filtered_data, fs, target_freqs)
         
         # Predict using the classifier
